@@ -910,6 +910,103 @@ $.extend(Selectize.prototype, {
 		this.isInputHidden = false;
 	},
 
+    isOptionHided : function(value){
+        var key, self = this, cache_items, cache_options;
+        key = hash_key(value);
+        if(self.options.hasOwnProperty(key)){
+            return (self.options[key].hasOwnProperty(self.settings.hideField)
+            && self.options[key][self.settings.hideField] === true);
+        }
+    },
+
+    hideOption : function(value){
+        var key, self = this, cache_items, cache_options;
+        key = hash_key(value);
+        if(self.options.hasOwnProperty(key)){
+            if(!self.options[key].hasOwnProperty(self.settings.hideField)
+                || self.options[key][self.settings.hideField] === false){
+                self.options[key][self.settings.hideField] = true;
+
+                cache_items = self.renderCache['item'];
+                cache_options = self.renderCache['option'];
+
+                if (cache_items && cache_items.hasOwnProperty(value)) {
+                    delete cache_items[value];
+                }
+                if (cache_options && cache_options.hasOwnProperty(value)) {
+                    delete cache_options[value];
+                }
+            }
+        }
+        return self;
+    },
+
+    showOption : function(value){
+        var key, self = this, cache_items, cache_options;
+        key = hash_key(value);
+        if(self.options.hasOwnProperty(key)){
+            if(self.options[key].hasOwnProperty(self.settings.hideField)
+                && self.options[key][self.settings.hideField] === true){
+                self.options[key][self.settings.hideField] = false;
+
+                cache_items = self.renderCache['item'];
+                cache_options = self.renderCache['option'];
+
+                if (cache_items && cache_items.hasOwnProperty(value)) {
+                    delete cache_items[value];
+                }
+                if (cache_options && cache_options.hasOwnProperty(value)) {
+                    delete cache_options[value];
+                }
+            }
+        }
+        return self;
+    },
+
+    showAllOptions : function(){
+        var key, self = this, cache_items, cache_options, value;
+        cache_items = self.renderCache['item'];
+        cache_options = self.renderCache['option'];
+        for(key in self.options){
+            if(self.options[key].hasOwnProperty(self.settings.hideField)
+                && self.options[key][self.settings.hideField] === true){
+                self.options[key][self.settings.hideField] = false;
+
+                value = self.options[key][self.settings.valueField];
+
+                if (cache_items && cache_items.hasOwnProperty(value)) {
+                    delete cache_items[value];
+                }
+                if (cache_options && cache_options.hasOwnProperty(value)) {
+                    delete cache_options[value];
+                }
+            }
+        }
+        return self;
+    },
+
+    hideAllOptions : function(){
+        var key, self = this, cache_items, cache_options, value;
+        cache_items = self.renderCache['item'];
+        cache_options = self.renderCache['option'];
+        for(key in self.options){
+            if(!self.options[key].hasOwnProperty(self.settings.hideField)
+                || self.options[key][self.settings.hideField] === false){
+                self.options[key][self.settings.hideField] = true;
+
+                value = self.options[key][self.settings.valueField];
+
+                if (cache_items && cache_items.hasOwnProperty(value)) {
+                    delete cache_items[value];
+                }
+                if (cache_options && cache_options.hasOwnProperty(value)) {
+                    delete cache_options[value];
+                }
+            }
+        }
+        return self;
+    },
+
 	/**
 	 * Gives the control focus.
 	 */
@@ -2032,6 +2129,10 @@ $.extend(Selectize.prototype, {
 			value = hash_key(data[self.settings.valueField]);
 			cache = !!value;
 		}
+
+        if(self.isOptionHided(value)){
+            return html;
+        }
 
 		// pull markup from cache if it exists
 		if (cache) {

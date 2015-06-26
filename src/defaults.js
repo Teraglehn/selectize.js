@@ -33,6 +33,7 @@ Selectize.defaults = {
 	optgroupLabelField: 'label',
 	optgroupValueField: 'value',
 	lockOptgroupOrder: false,
+	hideField: 'hide',
 
 	sortField: '$order',
 	searchField: ['text'],
