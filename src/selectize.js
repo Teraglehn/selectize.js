@@ -910,15 +910,35 @@ $.extend(Selectize.prototype, {
 		this.isInputHidden = false;
 	},
 
+    reload: function(){
+        var self = this;
+
+        if (self.loadedSearches.hasOwnProperty(self.getValue())){
+            delete self.loadedSearches[self.getValue()];
+        }
+        self.onSearchChange(self.getValue());
+    },
+
+    /**
+     * Return true if an option matching the given value is hided
+     * @param value
+     * @returns {boolean}
+     */
     isOptionHided : function(value){
-        var key, self = this, cache_items, cache_options;
+        var key, self = this;
         key = hash_key(value);
         if(self.options.hasOwnProperty(key)){
             return (self.options[key].hasOwnProperty(self.settings.hideField)
             && self.options[key][self.settings.hideField] === true);
         }
+        return false;
     },
 
+    /**
+     *
+     * @param value
+     * @returns {Selectize}
+     */
     hideOption : function(value){
         var key, self = this, cache_items, cache_options;
         key = hash_key(value);
